@@ -77,7 +77,7 @@ public static class PressureScenarios
     {
         var startAllocated = GC.GetTotalAllocatedBytes(precise: true);
 
-        GcObserver.PrintMemoryInfo("До");
+        GcObserver.PrintMemoryInfo("Состояние кучи до экспериментов");
         Console.WriteLine();
 
         Console.WriteLine("{0,-24}{1,10}{2,6}{3,6}{4,6}{5,12}{6,12}",
@@ -105,10 +105,10 @@ public static class PressureScenarios
 
         var total = GC.GetTotalAllocatedBytes(precise: true) - startAllocated;
         Console.WriteLine();
-        Console.WriteLine($"Всего аллоцировано: {GcObserver.ToMegabytes(total):F2} МБ");
+        Console.WriteLine($"Всего аллоцировано: {total / 1024d / 1024d:F2} МБ");
         Console.WriteLine();
 
-        GcObserver.PrintMemoryInfo("После");
+        GcObserver.PrintMemoryInfo("Состояние кучи после экспериментов");
     }
 }
 
