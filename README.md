@@ -50,37 +50,17 @@ MemoryLifecycle/
 - `Demos` — консольные сценарии;
 - `docs` — отчёты по темам.
 
-## Сборка и запуск
-
-Все команды выполняются из корня репозитория.
-
-```bash
-dotnet build src/MemoryLifecycle/MemoryLifecycle.csproj -c Release
-
-dotnet run --project src/MemoryLifecycle -c Release -- gc-pressure   # КТ №40
-dotnet run --project src/MemoryLifecycle -c Release -- gc-modes
-dotnet run --project src/MemoryLifecycle -c Release -- resources
-dotnet run --project src/MemoryLifecycle -c Release -- dispose
-dotnet run --project src/MemoryLifecycle -c Release -- all
-```
-
-Запуск в режиме Server GC (bash):
-
-```bash
-DOTNET_gcServer=1 dotnet run --project src/MemoryLifecycle -c Release --no-build -- gc-modes
-```
-
-## Результаты
-
-> Таблицы заполняются значениями, полученными на своей машине.
-
-### КТ №40. Поколения и давление на кучу
-
-Вариант 2 «Измерение давления». Команда:
+## Запуск
 
 ```bash
 dotnet run --project src/MemoryLifecycle -c Release -- gc-pressure
 ```
+
+## Результаты
+
+### КТ №40. Поколения и давление на кучу
+
+Вариант 2 «Измерение давления».
 
 Условия запуска: ОС ____, CPU ____, .NET ____, Workstation GC, Release.
 
@@ -89,43 +69,22 @@ dotnet run --project src/MemoryLifecycle -c Release -- gc-pressure
 | Мелкие объекты (100 000 × 100 Б) | | | | | | |
 | Крупные объекты (10 × 100 000 Б) | | | | | | |
 | Удерживаемые объекты (20 000 × 512 Б) | | | | | | |
-| Принудительный Gen2 (blocking) | | | | | | |
+| Принудительный Gen2 | | | | | | |
 
 Выводы:
 
 1. Gen0 нагружают мелкие короткоживущие объекты: они умирают молодыми,
-   эфемерные сборки дешёвые, Gen2 не растёт.
-2. Крупные объекты (≥ 85 000 байт) попадают в LOH, минуя Gen0. LOH относится к Gen2,
-   но счётчик Gen2 растёт только при сборке, а не при аллокации, поэтому
-   немедленной сборки нет.
-3. Gen2 нагружают долгоживущие данные из статического списка: их вклад
-   в `HeapSizeBytes` виден после очередной (здесь — принудительной) сборки.
+   сборки Gen0 дешёвые, Gen2 не растёт.
+2. Крупные объекты (от 85 000 байт) попадают в LOH, минуя Gen0. LOH относится к Gen2,
+   но счётчик Gen2 растёт только при сборке, а не при выделении памяти.
+3. Долгоживущие объекты из статического списка переживают сборки и уходят в Gen2,
+   их вклад в `HeapSizeBytes` виден после следующей сборки.
 
 Подробнее — [docs/01-gc.md](docs/01-gc.md).
 
-### КТ №41. Workstation и Server GC
-
-| Режим | Server GC | Время, мс | Gen0 | Gen2 |
-|---|---|---:|---:|---:|
-| Workstation | false | | | |
-| Server | true | | | |
-
-## Выводы
-
-_Заполняется после выполнения каждого этапа (см. также `docs/`)._
-
 ## История коммитов
 
-| № | Сообщение | Содержание |
-|---|---|---|
-| 0 | `chore: initialize .NET 10 console project` | решение, проект, .gitignore, README |
-| 1 | `feat(gc): add generations and pressure measurement` | КТ №40 |
-| 2 | `feat(gc): compare workstation and server gc modes` | КТ №41 |
-| 3 | `feat(resources): add finalizer and IDisposable examples` | КТ №42 |
-| 4 | `feat(dispose): implement full dispose pattern and IAsyncDisposable` | КТ №43 |
-| 5 | `docs: add measurement results and conclusions` | README, docs, выводы |
-
-Полная история: `git log --oneline --graph`.
+`git log --oneline`
 
 ## Автор
 
