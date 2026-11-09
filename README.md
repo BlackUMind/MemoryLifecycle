@@ -57,7 +57,7 @@ MemoryLifecycle/
 ```bash
 dotnet build src/MemoryLifecycle/MemoryLifecycle.csproj -c Release
 
-dotnet run --project src/MemoryLifecycle -c Release -- gc-pressure
+dotnet run --project src/MemoryLifecycle -c Release -- gc-pressure   # КТ №40
 dotnet run --project src/MemoryLifecycle -c Release -- gc-modes
 dotnet run --project src/MemoryLifecycle -c Release -- resources
 dotnet run --project src/MemoryLifecycle -c Release -- dispose
@@ -76,11 +76,32 @@ DOTNET_gcServer=1 dotnet run --project src/MemoryLifecycle -c Release --no-build
 
 ### КТ №40. Поколения и давление на кучу
 
-| Сценарий | Gen0 | Gen1 | Gen2 | Alloc, МБ |
-|---|---:|---:|---:|---:|
-| Мелкие объекты | | | | |
-| Крупные объекты | | | | |
-| Удерживаемые объекты | | | | |
+Вариант 2 «Измерение давления». Команда:
+
+```bash
+dotnet run --project src/MemoryLifecycle -c Release -- gc-pressure
+```
+
+Условия запуска: ОС ____, CPU ____, .NET ____, Workstation GC, Release.
+
+| Сценарий | Время, мс | Gen0 | Gen1 | Gen2 | Alloc, МБ | Heap Δ, МБ |
+|---|---:|---:|---:|---:|---:|---:|
+| Мелкие объекты (100 000 × 100 Б) | | | | | | |
+| Крупные объекты (10 × 100 000 Б) | | | | | | |
+| Удерживаемые объекты (20 000 × 512 Б) | | | | | | |
+| Принудительный Gen2 (blocking) | | | | | | |
+
+Выводы:
+
+1. Gen0 нагружают мелкие короткоживущие объекты: они умирают молодыми,
+   эфемерные сборки дешёвые, Gen2 не растёт.
+2. Крупные объекты (≥ 85 000 байт) попадают в LOH, минуя Gen0. LOH относится к Gen2,
+   но счётчик Gen2 растёт только при сборке, а не при аллокации, поэтому
+   немедленной сборки нет.
+3. Gen2 нагружают долгоживущие данные из статического списка: их вклад
+   в `HeapSizeBytes` виден после очередной (здесь — принудительной) сборки.
+
+Подробнее — [docs/01-gc.md](docs/01-gc.md).
 
 ### КТ №41. Workstation и Server GC
 

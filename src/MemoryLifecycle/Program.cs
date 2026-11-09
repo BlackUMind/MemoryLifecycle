@@ -1,3 +1,5 @@
+using MemoryLifecycle.Gc;
+
 // Точка входа и диспетчер команд проекта MemoryLifecycle.
 // Команды добавляются по мере выполнения этапов (КТ №40–43).
 
@@ -6,11 +8,17 @@ var command = args.Length > 0 ? args[0].ToLowerInvariant() : "help";
 switch (command)
 {
     case "gc-pressure": // КТ №40
+        PressureScenarios.RunAll();
+        break;
+
     case "gc-modes":    // КТ №41
     case "resources":   // КТ №42
     case "dispose":     // КТ №43
-    case "all":
         Console.WriteLine($"Команда '{command}' ещё не реализована.");
+        break;
+
+    case "all":
+        PressureScenarios.RunAll();
         break;
 
     default:
