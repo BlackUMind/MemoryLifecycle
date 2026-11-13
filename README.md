@@ -85,7 +85,6 @@ dotnet run --project src/MemoryLifecycle -c Release -- gc-pressure
 Способ менял в файле конфигурации .csproj
 ServerGarbageCollection true/false ServerGarbageCollection
 
-<<<<<<< HEAD
 =======
 |Показатель|Workstation (без нагрузки)|Workstation (только браузер)|Workstation (браузер + 4K видео)|Server GC (без нагрузки)|Server GC (только браузер)|Server GC (браузер + 4K видео)|
 |---|---|---|---|---|---|---|
@@ -102,7 +101,6 @@ ServerGarbageCollection true/false ServerGarbageCollection
 
 
 
->>>>>>> 51de407 (feat(gc): compare workstation and server gc modes)
 ## История коммитов
 
 `git log --oneline`
