@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
@@ -8,6 +8,7 @@
     <Nullable>enable</Nullable>
     <RootNamespace>MemoryLifecycle</RootNamespace>
 	<ServerGarbageCollection>true</ServerGarbageCollection>
+	<StartupObject>Program</StartupObject>
   </PropertyGroup>
 
 </Project>
